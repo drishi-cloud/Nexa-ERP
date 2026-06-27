@@ -6,8 +6,14 @@ from app.models.company import Company
 from app.api import auth, company
 from app.models.customer import Customer
 from app.api import auth, company, customer
+from app.models.supplier import Supplier
+from app.models.category import Category
+from app.models.unit import Unit
+from app.models.stock_item import StockItem
+from app.models.purchase import Purchase
+from app.models.sales import Sales
 
-from app.api import auth
+from app.api import auth, company, customer, supplier, category, unit, stock_item,purchase,sales
 
 Base.metadata.create_all(bind=engine)
 
@@ -20,7 +26,12 @@ app = FastAPI(
 app.include_router(auth.router)
 app.include_router(company.router)
 app.include_router(customer.router)
-
+app.include_router(supplier.router)
+app.include_router(category.router)
+app.include_router(unit.router)
+app.include_router(stock_item.router)
+app.include_router(purchase.router)
+app.include_router(sales.router)
 
 @app.get("/")
 def home():

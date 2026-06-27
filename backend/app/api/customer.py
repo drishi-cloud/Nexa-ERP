@@ -4,10 +4,13 @@ from sqlalchemy.orm import Session
 from app.database.connection import get_db
 from app.models.customer import Customer
 from app.models.user import User
-from app.schemas.customer import CustomerCreate
+from app.schemas.customer import CustomerCreate, CustomerUpdate
 from app.auth.current_user import get_current_user
 
-router = APIRouter(prefix="/customers", tags=["Customers"])
+router = APIRouter(
+    prefix="/customers",
+    tags=["Customers"]
+)
 
 
 @router.post("/")
@@ -66,6 +69,35 @@ def get_customer(
     return customer
 
 
+@router.put("/{customer_id}")
+def update_customer(
+    customer_id: int,
+    updated_customer: CustomerUpdate,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user)
+):
+    customer = db.query(Customer).filter(
+        Customer.id == customer_id,
+        Customer.owner_id == current_user.id
+    ).first()
+
+    if not customer:
+        raise HTTPException(status_code=404, detail="Customer not found")
+
+    update_data = updated_customer.model_dump(exclude_unset=True)
+
+    for key, value in update_data.items():
+        setattr(customer, key, value)
+
+    db.commit()
+    db.refresh(customer)
+
+    return {
+        "message": "Customer updated successfully",
+        "customer": customer
+    }
+
+
 @router.delete("/{customer_id}")
 def delete_customer(
     customer_id: int,
@@ -83,4 +115,6 @@ def delete_customer(
     db.delete(customer)
     db.commit()
 
-    return {"message": "Customer deleted successfully"}
+    return {
+        "message": "Customer deleted successfully"
+    }

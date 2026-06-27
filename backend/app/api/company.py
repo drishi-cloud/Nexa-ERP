@@ -4,7 +4,7 @@ from sqlalchemy.orm import Session
 from app.database.connection import get_db
 from app.models.company import Company
 from app.models.user import User
-from app.schemas.company import CompanyCreate
+from app.schemas.company import CompanyCreate, CompanyUpdate
 from app.auth.current_user import get_current_user
 
 router = APIRouter(
@@ -44,11 +44,9 @@ def get_companies(
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user)
 ):
-    companies = db.query(Company).filter(
+    return db.query(Company).filter(
         Company.owner_id == current_user.id
     ).all()
-
-    return companies
 
 
 @router.get("/{company_id}")
@@ -66,3 +64,52 @@ def get_company(
         raise HTTPException(status_code=404, detail="Company not found")
 
     return company
+
+
+@router.put("/{company_id}")
+def update_company(
+    company_id: int,
+    updated_company: CompanyUpdate,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user)
+):
+    company = db.query(Company).filter(
+        Company.id == company_id,
+        Company.owner_id == current_user.id
+    ).first()
+
+    if not company:
+        raise HTTPException(status_code=404, detail="Company not found")
+
+    update_data = updated_company.dict(exclude_unset=True)
+
+    for key, value in update_data.items():
+        setattr(company, key, value)
+
+    db.commit()
+    db.refresh(company)
+
+    return {
+        "message": "Company updated successfully",
+        "company": company
+    }
+
+
+@router.delete("/{company_id}")
+def delete_company(
+    company_id: int,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user)
+):
+    company = db.query(Company).filter(
+        Company.id == company_id,
+        Company.owner_id == current_user.id
+    ).first()
+
+    if not company:
+        raise HTTPException(status_code=404, detail="Company not found")
+
+    db.delete(company)
+    db.commit()
+
+    return {"message": "Company deleted successfully"}
