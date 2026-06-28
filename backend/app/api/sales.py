@@ -7,6 +7,10 @@ from app.models.stock_item import StockItem
 from app.models.user import User
 from app.schemas.sales import SalesCreate
 from app.auth.current_user import get_current_user
+from fastapi.responses import FileResponse
+from app.models.customer import Customer
+from app.models.company import Company
+from app.utils.invoice_pdf import generate_invoice_pdf
 
 router = APIRouter(prefix="/sales", tags=["Sales"])
 
@@ -82,3 +86,29 @@ def get_sale(
         raise HTTPException(status_code=404, detail="Sale not found")
 
     return sale
+
+@router.get("/{sale_id}/invoice")
+def download_invoice(
+    sale_id: int,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user)
+):
+    sale = db.query(Sales).filter(
+        Sales.id == sale_id,
+        Sales.owner_id == current_user.id
+    ).first()
+
+    if not sale:
+        raise HTTPException(status_code=404, detail="Sale not found")
+
+    customer = db.query(Customer).filter(Customer.id == sale.customer_id).first()
+    stock_item = db.query(StockItem).filter(StockItem.id == sale.stock_item_id).first()
+    company = db.query(Company).filter(Company.id == sale.company_id).first()
+
+    pdf_path = generate_invoice_pdf(sale, customer, stock_item, company)
+
+    return FileResponse(
+        path=pdf_path,
+        filename=f"invoice_{sale.invoice_number}.pdf",
+        media_type="application/pdf"
+    )
