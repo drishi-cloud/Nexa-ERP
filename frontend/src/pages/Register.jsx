@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import API from "../services/api";
+import { toast } from "react-toastify";
 
 function Register() {
   const [fullName, setFullName] = useState("");
@@ -26,8 +27,14 @@ function Register() {
       setEmail("");
       setPassword("");
     } catch (err) {
-      setError("Registration failed. Email may already exist.");
-    }
+    console.log("REGISTER ERROR:", err.response?.data);
+
+    const message =
+        err.response?.data?.detail || "Registration failed";
+
+    setError(message);
+    toast.error(message);
+}
   };
 
   return (

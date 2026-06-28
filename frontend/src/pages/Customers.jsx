@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { toast } from "react-toastify";
 
 import DashboardLayout from "../layouts/DashboardLayout";
 import API from "../services/api";
@@ -33,7 +34,7 @@ function Customers() {
       setLoading(false);
     }
   };
-
+  toast.success("Customer deleted successfully");
   useEffect(() => {
     fetchCustomers();
   }, []);
@@ -51,6 +52,7 @@ function Customers() {
         opening_balance: Number(form.opening_balance),
         company_id: 1,
       });
+      toast.success("Customer created successfully");
 
       setShowModal(false);
       setForm({
@@ -65,7 +67,7 @@ function Customers() {
 
       fetchCustomers();
     } catch (error) {
-      alert("Failed to create customer");
+      toast.error("Failed to create customer");
     }
   };
 
@@ -76,7 +78,7 @@ function Customers() {
       await API.delete(`/customers/${id}`);
       fetchCustomers();
     } catch (error) {
-      alert("Failed to delete customer");
+      toast.error("Failed to delete customer");
     }
   };
 

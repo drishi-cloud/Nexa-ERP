@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { toast } from "react-toastify";
 
 import DashboardLayout from "../layouts/DashboardLayout";
 import API from "../services/api";
@@ -33,7 +34,7 @@ function Suppliers() {
       setLoading(false);
     }
   };
-
+  toast.success("Supplier deleted successfully");
   useEffect(() => {
     fetchSuppliers();
   }, []);
@@ -51,6 +52,7 @@ function Suppliers() {
         opening_balance: Number(form.opening_balance),
         company_id: 1,
       });
+      toast.success("Supplier created successfully");
 
       setShowModal(false);
       setForm({
@@ -65,7 +67,7 @@ function Suppliers() {
 
       fetchSuppliers();
     } catch (error) {
-      alert("Failed to create supplier");
+      toast.error("Failed to create supplier");
     }
   };
 
@@ -76,7 +78,7 @@ function Suppliers() {
       await API.delete(`/suppliers/${id}`);
       fetchSuppliers();
     } catch (error) {
-      alert("Failed to delete supplier");
+      toast.error("Failed to delete supplier");
     }
   };
 
