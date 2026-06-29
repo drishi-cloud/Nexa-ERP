@@ -14,6 +14,7 @@ from app.models.purchase import Purchase
 from app.models.sales import Sales
 from fastapi.middleware.cors import CORSMiddleware
 
+
 from app.api import auth, company, customer, supplier, category, unit, stock_item,purchase,sales,dashboard,reports
 
 Base.metadata.create_all(bind=engine)

@@ -1,7 +1,6 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import API from "../services/api";
-import { toast } from "react-toastify";
 
 function Register() {
   const [fullName, setFullName] = useState("");
@@ -27,14 +26,13 @@ function Register() {
       setEmail("");
       setPassword("");
     } catch (err) {
-    console.log("REGISTER ERROR:", err.response?.data);
+      console.log("REGISTER ERROR:", err.response?.data);
 
-    const message =
+      const errorMessage =
         err.response?.data?.detail || "Registration failed";
 
-    setError(message);
-    toast.error(message);
-}
+      setError(errorMessage);
+    }
   };
 
   return (
@@ -46,6 +44,7 @@ function Register() {
           <div className="mx-auto w-14 h-14 bg-indigo-500 rounded-2xl flex items-center justify-center text-white text-2xl font-bold mb-4">
             N
           </div>
+
           <h1 className="text-3xl font-bold text-white">Create Account</h1>
           <p className="text-slate-300 mt-2">Start using Nexa ERP</p>
         </div>
@@ -68,6 +67,7 @@ function Register() {
             placeholder="Full name"
             value={fullName}
             onChange={(e) => setFullName(e.target.value)}
+            required
           />
 
           <input
@@ -75,6 +75,7 @@ function Register() {
             placeholder="Email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
+            required
           />
 
           <input
@@ -83,6 +84,7 @@ function Register() {
             placeholder="Password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
+            required
           />
 
           <button className="w-full py-3 rounded-xl bg-indigo-500 hover:bg-indigo-600 text-white font-semibold transition">

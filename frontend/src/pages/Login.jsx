@@ -1,6 +1,5 @@
 import { useState } from "react";
 import API from "../services/api";
-import { toast } from "react-toastify";
 
 function Login() {
   const [email, setEmail] = useState("drishi@gmail.com");
@@ -18,18 +17,16 @@ function Login() {
 
       localStorage.setItem("nexa_token", res.data.access_token);
       localStorage.setItem("nexa_user", JSON.stringify(res.data.user));
-      toast.success("Login successful");
-      window.location.href = "/dashboard";
-    }catch (err) {
-    console.log("LOGIN ERROR:", err.response?.data);
 
-    const message =
+      window.location.href = "/dashboard";
+    } catch (err) {
+      console.log("LOGIN ERROR:", err.response?.data);
+
+      const message =
         err.response?.data?.detail || "Invalid email or password";
 
-    setError(message);
-    toast.error(message);
-}
-    
+      setError(message);
+    }
   };
 
   return (
@@ -83,11 +80,12 @@ function Login() {
         <p className="text-center text-slate-400 text-xs mt-6">
           Keyboard-first business management platform
         </p>
+
         <p className="text-center text-slate-300 text-sm mt-6">
-            Don't have an account?{" "}
-            <a href="/register" className="text-blue-300 font-semibold">
-                Create account
-            </a>
+          Don't have an account?{" "}
+          <a href="/register" className="text-blue-300 font-semibold">
+            Create account
+          </a>
         </p>
       </div>
     </div>

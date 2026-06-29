@@ -1,5 +1,4 @@
 import { useEffect, useState } from "react";
-import { toast } from "react-toastify";
 
 import DashboardLayout from "../layouts/DashboardLayout";
 import API from "../services/api";
@@ -29,12 +28,12 @@ function Suppliers() {
       const res = await API.get("/suppliers/?company_id=1");
       setSuppliers(res.data);
     } catch (error) {
-      console.log("Supplier fetch error", error);
+      console.log("Failed to load suppliers", error);
     } finally {
       setLoading(false);
     }
   };
-  toast.success("Supplier deleted successfully");
+
   useEffect(() => {
     fetchSuppliers();
   }, []);
@@ -52,9 +51,10 @@ function Suppliers() {
         opening_balance: Number(form.opening_balance),
         company_id: 1,
       });
-      toast.success("Supplier created successfully");
 
+      alert("Supplier created successfully");
       setShowModal(false);
+
       setForm({
         supplier_name: "",
         mobile_number: "",
@@ -67,7 +67,7 @@ function Suppliers() {
 
       fetchSuppliers();
     } catch (error) {
-      toast.error("Failed to create supplier");
+      alert("Failed to create supplier");
     }
   };
 
@@ -76,9 +76,10 @@ function Suppliers() {
 
     try {
       await API.delete(`/suppliers/${id}`);
+      alert("Supplier deleted successfully");
       fetchSuppliers();
     } catch (error) {
-      toast.error("Failed to delete supplier");
+      alert("Failed to delete supplier");
     }
   };
 
@@ -123,7 +124,10 @@ function Suppliers() {
 
       {showModal && (
         <Modal title="Add New Supplier" onClose={() => setShowModal(false)}>
-          <form onSubmit={createSupplier} className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <form
+            onSubmit={createSupplier}
+            className="grid grid-cols-1 md:grid-cols-2 gap-4"
+          >
             <input
               name="supplier_name"
               value={form.supplier_name}

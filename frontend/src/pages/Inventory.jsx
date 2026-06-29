@@ -1,5 +1,4 @@
 import { useEffect, useState } from "react";
-import { toast } from "react-toastify";
 
 import DashboardLayout from "../layouts/DashboardLayout";
 import API from "../services/api";
@@ -34,12 +33,12 @@ function Inventory() {
       const res = await API.get("/stock-items/?company_id=1");
       setItems(res.data);
     } catch (error) {
-      console.log("Inventory fetch error", error);
+      console.log("Failed to load inventory", error);
     } finally {
       setLoading(false);
     }
   };
-  toast.success("Stock item deleted successfully");
+
   useEffect(() => {
     fetchItems();
   }, []);
@@ -63,8 +62,10 @@ function Inventory() {
         unit_id: Number(form.unit_id),
         company_id: 1,
       });
-      toast.success("Stock item created successfully");
+
+      alert("Stock item created successfully");
       setShowModal(false);
+
       setForm({
         product_name: "",
         product_code: "",
@@ -82,7 +83,7 @@ function Inventory() {
 
       fetchItems();
     } catch (error) {
-      toast.error("Failed to create stock item. Product code may already exist.");
+      alert("Failed to create stock item. Product code may already exist.");
     }
   };
 
@@ -91,9 +92,10 @@ function Inventory() {
 
     try {
       await API.delete(`/stock-items/${id}`);
+      alert("Stock item deleted successfully");
       fetchItems();
     } catch (error) {
-      toast.error("Failed to delete stock item");
+      alert("Failed to delete stock item");
     }
   };
 
@@ -134,6 +136,7 @@ function Inventory() {
                   Low Stock
                 </span>
               )}
+
               <button
                 onClick={() => deleteItem(row.id)}
                 className="px-3 py-1 rounded-lg bg-red-50 text-red-600 hover:bg-red-100 text-sm font-medium"
@@ -147,7 +150,10 @@ function Inventory() {
 
       {showModal && (
         <Modal title="Add Stock Item" onClose={() => setShowModal(false)}>
-          <form onSubmit={createItem} className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <form
+            onSubmit={createItem}
+            className="grid grid-cols-1 md:grid-cols-2 gap-4"
+          >
             <input
               name="product_name"
               value={form.product_name}

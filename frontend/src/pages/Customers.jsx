@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { toast } from "react-toastify";
+
 
 import DashboardLayout from "../layouts/DashboardLayout";
 import API from "../services/api";
@@ -29,12 +29,12 @@ function Customers() {
       const res = await API.get("/customers/?company_id=1");
       setCustomers(res.data);
     } catch (error) {
-      console.log("Customer fetch error", error);
+      console.log("Failed to load customers");
     } finally {
       setLoading(false);
     }
   };
-  toast.success("Customer deleted successfully");
+
   useEffect(() => {
     fetchCustomers();
   }, []);
@@ -52,9 +52,10 @@ function Customers() {
         opening_balance: Number(form.opening_balance),
         company_id: 1,
       });
-      toast.success("Customer created successfully");
 
+      alert("Customer created successfully");
       setShowModal(false);
+
       setForm({
         customer_name: "",
         mobile_number: "",
@@ -67,7 +68,7 @@ function Customers() {
 
       fetchCustomers();
     } catch (error) {
-      toast.error("Failed to create customer");
+      alert("Failed to create customer");
     }
   };
 
@@ -76,9 +77,10 @@ function Customers() {
 
     try {
       await API.delete(`/customers/${id}`);
+      alert("Customer deleted successfully");
       fetchCustomers();
     } catch (error) {
-      toast.error("Failed to delete customer");
+      alert("Failed to delete customer");
     }
   };
 
@@ -124,65 +126,17 @@ function Customers() {
       {showModal && (
         <Modal title="Add New Customer" onClose={() => setShowModal(false)}>
           <form onSubmit={createCustomer} className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <input
-              name="customer_name"
-              value={form.customer_name}
-              onChange={handleChange}
-              placeholder="Customer Name"
-              className="px-4 py-3 border rounded-xl outline-none focus:ring-2 focus:ring-blue-500"
-              required
-            />
-
-            <input
-              name="mobile_number"
-              value={form.mobile_number}
-              onChange={handleChange}
-              placeholder="Mobile Number"
-              className="px-4 py-3 border rounded-xl outline-none focus:ring-2 focus:ring-blue-500"
-            />
-
-            <input
-              name="email"
-              value={form.email}
-              onChange={handleChange}
-              placeholder="Email"
-              className="px-4 py-3 border rounded-xl outline-none focus:ring-2 focus:ring-blue-500"
-            />
-
-            <input
-              name="gst_number"
-              value={form.gst_number}
-              onChange={handleChange}
-              placeholder="GST Number"
-              className="px-4 py-3 border rounded-xl outline-none focus:ring-2 focus:ring-blue-500"
-            />
-
-            <input
-              name="opening_balance"
-              value={form.opening_balance}
-              onChange={handleChange}
-              type="number"
-              placeholder="Opening Balance"
-              className="px-4 py-3 border rounded-xl outline-none focus:ring-2 focus:ring-blue-500"
-            />
-
-            <input
-              name="address"
-              value={form.address}
-              onChange={handleChange}
-              placeholder="Address"
-              className="px-4 py-3 border rounded-xl outline-none focus:ring-2 focus:ring-blue-500"
-            />
+            <input name="customer_name" value={form.customer_name} onChange={handleChange} placeholder="Customer Name" className="px-4 py-3 border rounded-xl outline-none focus:ring-2 focus:ring-blue-500" required />
+            <input name="mobile_number" value={form.mobile_number} onChange={handleChange} placeholder="Mobile Number" className="px-4 py-3 border rounded-xl outline-none focus:ring-2 focus:ring-blue-500" />
+            <input name="email" value={form.email} onChange={handleChange} placeholder="Email" className="px-4 py-3 border rounded-xl outline-none focus:ring-2 focus:ring-blue-500" />
+            <input name="gst_number" value={form.gst_number} onChange={handleChange} placeholder="GST Number" className="px-4 py-3 border rounded-xl outline-none focus:ring-2 focus:ring-blue-500" />
+            <input name="opening_balance" value={form.opening_balance} onChange={handleChange} type="number" placeholder="Opening Balance" className="px-4 py-3 border rounded-xl outline-none focus:ring-2 focus:ring-blue-500" />
+            <input name="address" value={form.address} onChange={handleChange} placeholder="Address" className="px-4 py-3 border rounded-xl outline-none focus:ring-2 focus:ring-blue-500" />
 
             <div className="md:col-span-2 flex justify-end gap-3 mt-4">
-              <button
-                type="button"
-                onClick={() => setShowModal(false)}
-                className="px-5 py-3 rounded-xl border text-slate-600"
-              >
+              <button type="button" onClick={() => setShowModal(false)} className="px-5 py-3 rounded-xl border text-slate-600">
                 Cancel
               </button>
-
               <button className="px-5 py-3 rounded-xl bg-blue-600 text-white font-semibold">
                 Save Customer
               </button>
